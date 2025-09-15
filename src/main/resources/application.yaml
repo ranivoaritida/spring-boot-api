@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: store
+  datasource:
+    url: jdbc:mysql://localhost:8889/api_store?createDatabaseIfNotExist=true
+    username: root
+    password: root
+  jpa:
+    show-sql: true

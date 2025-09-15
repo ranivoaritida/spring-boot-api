@@ -1,0 +1,48 @@
+package com.codesand.store.controllers;
+
+import com.codesand.store.dtos.RegisterUserRequest;
+import com.codesand.store.dtos.UserDto;
+import com.codesand.store.entities.User;
+import com.codesand.store.mappers.UserMapper;
+import com.codesand.store.repositories.UserRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Set;
+
+@RestController
+@AllArgsConstructor
+@RequestMapping("/users")
+public class UserController {
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+
+    @GetMapping
+    public List<UserDto> getAllUsers(@RequestParam(required = false, defaultValue = "", name = "sort") String sortBy){
+       if(!Set.of("name","email").contains(sortBy))
+           sortBy="name";
+
+        return userRepository.findAll(Sort.by(sortBy))///cmd + p
+                .stream()
+                .map(userMapper::toDto)//user -> userMapper.toDto(user)
+                .toList();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUser(@PathVariable Long id){
+        var user = userRepository.findById(id).orElse( null) ;
+        if(user==null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(userMapper.toDto(user));
+    }
+
+    @PostMapping
+    public UserDto createUser(@RequestBody RegisterUserRequest request){
+        return null;
+    }
+
+}
