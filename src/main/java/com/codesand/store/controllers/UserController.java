@@ -1,6 +1,7 @@
 package com.codesand.store.controllers;
 
 import com.codesand.store.dtos.RegisterUserRequest;
+import com.codesand.store.dtos.UpdateUserRequest;
 import com.codesand.store.dtos.UserDto;
 import com.codesand.store.entities.User;
 import com.codesand.store.mappers.UserMapper;
@@ -51,6 +52,28 @@ public class UserController {
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
 
         return ResponseEntity.created(uri).body(userDto);
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> updateUser(@PathVariable(name = "id") Long id, @RequestBody UpdateUserRequest request){
+        var user = userRepository.findById(id).orElse(null);
+        if(user==null){
+            return ResponseEntity.notFound().build();
+        }
+        userMapper.update(request,user);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(userMapper.toDto(user));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id){
+
+        var user = userRepository.findById(id).orElse(null);
+        if(user==null){
+            return ResponseEntity.notFound().build();
+        }
+
+        userRepository.delete(user);
+        return ResponseEntity.noContent().build();
     }
 
 }
