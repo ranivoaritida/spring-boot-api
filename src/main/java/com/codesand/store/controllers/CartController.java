@@ -3,17 +3,20 @@ package com.codesand.store.controllers;
 import com.codesand.store.dtos.AddItemToCartRequest;
 import com.codesand.store.dtos.CartDto;
 import com.codesand.store.dtos.CartItemDto;
+import com.codesand.store.dtos.UpdateCartItemRequest;
 import com.codesand.store.entities.Cart;
 import com.codesand.store.entities.CartItem;
 import com.codesand.store.mappers.CartMapper;
 import com.codesand.store.repositories.CartRepository;
 import com.codesand.store.repositories.ProductRepository;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Map;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -78,5 +81,35 @@ public class CartController {
         }
 
         return ResponseEntity.ok(cartMapper.toDto(cart));
+    }
+
+    @PutMapping("/{cartId}/items/{productId}")
+    public ResponseEntity<?> updateItem(
+            @PathVariable UUID cartId,
+            @PathVariable Long productId,
+            @Valid @RequestBody UpdateCartItemRequest request){
+
+        var cart = cartRepository.findById(cartId).orElse(null);
+        if(cart == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    Map.of("error","Cart not found")
+            );
+        }
+
+        var cartItem = cart.getItems().stream()
+                .filter(cartItem1 -> cartItem1.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElse(null);
+        if(cartItem == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    Map.of("error","Product was not found into the cart")
+            );
+        }
+
+        cartItem.setQuantity(request.getQuantity());
+        cartRepository.save(cart);
+
+        return ResponseEntity.ok(cartMapper.toDto(cartItem));
+
     }
 }
