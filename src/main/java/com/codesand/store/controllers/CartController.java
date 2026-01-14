@@ -4,13 +4,8 @@ import com.codesand.store.dtos.AddItemToCartRequest;
 import com.codesand.store.dtos.CartDto;
 import com.codesand.store.dtos.CartItemDto;
 import com.codesand.store.dtos.UpdateCartItemRequest;
-import com.codesand.store.entities.Cart;
-import com.codesand.store.entities.CartItem;
 import com.codesand.store.exceptions.CartNotFoundException;
 import com.codesand.store.exceptions.ProductNotFoundException;
-import com.codesand.store.mappers.CartMapper;
-import com.codesand.store.repositories.CartRepository;
-import com.codesand.store.repositories.ProductRepository;
 import com.codesand.store.services.CartService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -26,9 +21,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/carts")
 public class CartController {
-    private final CartRepository cartRepository;
-    private final CartMapper cartMapper;
-    private final ProductRepository productRepository;
     private final CartService cartService;
 
     @PostMapping
@@ -75,14 +67,7 @@ public class CartController {
 
     @DeleteMapping("/{cardId}/items")
     public ResponseEntity<Void> clearCart(UUID cartId){
-        var cart = cartRepository.findById(cartId).orElse(null);
-        if(cart ==null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-        cart.clear();
-        cartRepository.save(cart);
-
+        cartService.clearCart(cartId);
         return ResponseEntity.noContent().build();
     }
 

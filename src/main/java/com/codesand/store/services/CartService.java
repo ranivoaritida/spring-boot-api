@@ -81,4 +81,13 @@ public class CartService {
         cart.removeItem(productId);
         cartRepository.save(cart);
     }
+
+    public void clearCart(UUID cartId){
+        var cart = cartRepository.findById(cartId).orElse(null);
+        if(cart ==null){
+            throw new CartNotFoundException();
+        }
+        cart.clear();
+        cartRepository.save(cart);
+    }
 }
