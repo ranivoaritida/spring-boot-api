@@ -8,6 +8,7 @@ import com.codesand.store.exceptions.ProductNotFoundException;
 import com.codesand.store.mappers.CartMapper;
 import com.codesand.store.repositories.CartRepository;
 import com.codesand.store.repositories.ProductRepository;
+import lombok.AllArgsConstructor;
 import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class CartService {
     private CartRepository cartRepository;
     private CartMapper cartMapper;
