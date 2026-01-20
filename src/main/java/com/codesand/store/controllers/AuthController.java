@@ -1,6 +1,9 @@
 package com.codesand.store.controllers;
 
+import com.codesand.store.dtos.JwtResponse;
 import com.codesand.store.dtos.LoginRequest;
+import com.codesand.store.services.JwtService;
+import com.codesand.store.services.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,16 +21,19 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> authentication(@Valid @RequestBody LoginRequest request){
+    public ResponseEntity<JwtResponse> authentication(@Valid @RequestBody LoginRequest request){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-        return ResponseEntity.ok().build();
+        var token = jwtService.generateToken(request.getEmail());
+
+        return ResponseEntity.ok(new JwtResponse(token));
 
     }
 
