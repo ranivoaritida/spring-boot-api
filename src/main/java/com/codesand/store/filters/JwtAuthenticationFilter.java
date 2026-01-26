@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 null,
                 null
         );
-        System.out.println("tinga eto");
+        System.out.println("tonga eto");
         authentication.setDetails( new WebAuthenticationDetailsSource().buildDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
