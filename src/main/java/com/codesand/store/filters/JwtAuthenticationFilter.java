@@ -38,11 +38,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
         var authentication = new UsernamePasswordAuthenticationToken(
-                jwtService.getEmailFromToken(token),
+                jwtService.getIdFromToken(token),
                 null,
                 null
         );
-        System.out.println("tonga eto");
+        //System.out.println("tonga eto");
         authentication.setDetails( new WebAuthenticationDetailsSource().buildDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
