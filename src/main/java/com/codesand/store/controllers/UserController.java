@@ -4,6 +4,7 @@ import com.codesand.store.dtos.ChangePasswordRequest;
 import com.codesand.store.dtos.RegisterUserRequest;
 import com.codesand.store.dtos.UpdateUserRequest;
 import com.codesand.store.dtos.UserDto;
+import com.codesand.store.entities.Role;
 import com.codesand.store.entities.User;
 import com.codesand.store.mappers.UserMapper;
 import com.codesand.store.repositories.UserRepository;
@@ -61,8 +62,8 @@ public class UserController {
         }
         var user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);
         userRepository.save(user);
-
         var userDto = userMapper.toDto(user);
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
 
